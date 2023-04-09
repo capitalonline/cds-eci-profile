@@ -265,13 +265,18 @@ func (s *Server) mutatePod(ar admissionv1.AdmissionReview) *admissionv1.Admissio
 		Allowed: true,
 	}
 	if len(patchInfos) != 0 {
-		data, _ := json.Marshal(patchInfos)
-		klog.V(4).Infof("PatchData: %s", string(data))
-		ret.PatchType = func() *admissionv1.PatchType {
-			pt := admissionv1.PatchTypeJSONPatch
-			return &pt
-		}()
-		ret.Patch = data
+		klog.Infof("pod.Spec.Containers len %v", len(pod.Spec.Containers))
+		if len(pod.Spec.Containers) > 20 {
+			ret.Allowed = false
+		} else {
+			data, _ := json.Marshal(patchInfos)
+			klog.V(4).Infof("PatchData: %s", string(data))
+			ret.PatchType = func() *admissionv1.PatchType {
+				pt := admissionv1.PatchTypeJSONPatch
+				return &pt
+			}()
+			ret.Patch = data
+		}
 	}
 	return ret
 }
