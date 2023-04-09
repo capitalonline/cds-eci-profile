@@ -1,7 +1,7 @@
 FROM golang:1.19 as build
 RUN mkdir /app
 RUN mkdir /app/bin
-COPY ../../../../Users/Administrator/Desktop/cds-eci-profile /app/
+COPY . /app/
 RUN go env -w GO111MODULE=on
 # RUN go env -w GOPROXY=https://goproxy.cn,direct
 RUN go env
