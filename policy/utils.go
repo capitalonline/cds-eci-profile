@@ -20,24 +20,10 @@ type VKTaint struct {
 
 func init() {
 	vkTaintStr := os.Getenv("VK_TAINTS")
-	if vkTaintStr == "" {
-		virtualNodeTolerationList = append(virtualNodeTolerationList, v1.Toleration{
-			Key:      vnodeNodeSelectorKey,
-			Value:    vnodeNodeSelectorVal,
-			Operator: v1.TolerationOpEqual,
-			Effect:   v1.TaintEffectNoSchedule,
-		})
-	} else {
+	if vkTaintStr != "" {
 		var l []VKTaint
 		err := json.Unmarshal([]byte(vkTaintStr), &l)
-		if err != nil {
-			virtualNodeTolerationList = append(virtualNodeTolerationList, v1.Toleration{
-				Key:      vnodeNodeSelectorKey,
-				Value:    vnodeNodeSelectorVal,
-				Operator: v1.TolerationOpEqual,
-				Effect:   v1.TaintEffectNoSchedule,
-			})
-		} else {
+		if err == nil {
 			for _, t := range l {
 				var effect v1.TaintEffect
 				switch t.Effect {
@@ -62,7 +48,14 @@ func init() {
 }
 
 var (
-	virtualNodeTolerationList []v1.Toleration
+	virtualNodeTolerationList = []v1.Toleration{
+		v1.Toleration{
+			Key:      vnodeNodeSelectorKey,
+			Value:    vnodeNodeSelectorVal,
+			Operator: v1.TolerationOpEqual,
+			Effect:   v1.TaintEffectNoSchedule,
+		},
+	}
 	//virtualNodeToleration     = v1.Toleration{
 	//	Key:      vnodeNodeSelectorKey,
 	//	Value:    vnodeNodeSelectorVal,
